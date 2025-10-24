@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Switzerland Chocolate Map - Discover Swiss Chocolate Producers</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #faf8f6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #8b5a3c 0%, #5d3a1a 100%);
+            color: white;
+            padding: 30px 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            position: relative;
+            z-index: 1001;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.95;
+            line-height: 1.5;
+            max-width: 900px;
+            font-weight: 400;
+        }
+
+        .intro {
+            background: linear-gradient(to bottom, #fafaf9 0%, #ffffff 100%);
+            padding: 25px 40px;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .intro-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .intro p {
+            color: #3d2817;
+            line-height: 1.6;
+            font-size: 14px;
+            margin-bottom: 10px;
+            max-width: 1000px;
+        }
+
+        .intro p:last-child {
+            margin-bottom: 0;
+        }
+
+        .intro strong {
+            color: #6d3f20;
+            font-weight: 600;
+        }
+
+        .controls {
+            background: white;
+            padding: 15px 40px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            z-index: 1000;
+            position: relative;
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .controls-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .control-group label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #6d3f20;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+
+        select, input {
+            padding: 10px 14px;
+            border: 1px solid #d4d4d4;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        select:hover, input:hover {
+            border-color: #a8a8a8;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #6d3f20;
+            box-shadow: 0 0 0 3px rgba(109, 63, 32, 0.1);
+        }
+
+        select {
+            cursor: pointer;
+            min-width: 160px;
+        }
+
+        input[type="text"] {
+            min-width: 220px;
+        }
+
+        #map {
+            height: calc(100vh - 340px);
+            width: 100%;
+            min-height: 600px;
+        }
+
+        .ad-container {
+            background: #f5f5f5;
+            padding: 15px 20px;
+            text-align: center;
+            border-top: 1px solid #e5e5e5;
+            min-height: 100px;
+        }
+
+        .ad-label {
+            font-size: 10px;
+            color: #999;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .ad-space {
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: 70px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ad-placeholder {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .custom-marker {
+            background: #6d3f20;
+            border: 3px solid white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: relative;
+        }
+
+        .custom-marker:hover {
+            transform: scale(1.3);
+            background: #d4af37;
+        }
+
+        .marker-tooltip {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #6d3f20;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            white-space: nowrap;
+            font-size: 13px;
+            font-weight: 600;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+
+        .marker-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #6d3f20;
+        }
+
+        .custom-marker:hover .marker-tooltip {
+            opacity: 1;
+        }
+
+        .custom-marker.artisan {
+            background: #8b4513;
+        }
+
+        .custom-marker.commercial {
+            background: #4a2812;
+        }
+
+        .leaflet-popup-content-wrapper {
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .leaflet-popup-content {
+            margin: 0;
+            min-width: 280px;
+        }
+
+        .popup-header {
+            background: linear-gradient(135deg, #6d3f20 0%, #4a2812 100%);
+            color: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .popup-logo {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .popup-header-text {
+            flex: 1;
+        }
+
+        .popup-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+
+        .popup-header h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .popup-header .type-badge {
+            display: none;
+        }
+
+        .popup-body {
+            padding: 15px;
+        }
+
+        .popup-body p {
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .popup-specialties {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 12px;
+        }
+
+        .specialty-tag {
+            background: #f5e6d3;
+            color: #6d3f20;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .popup-footer {
+            display: flex;
+            gap: 10px;
+            padding: 0 15px 15px 15px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: block;
+        }
+
+        .btn-primary {
+            background: #6d3f20;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4a2812;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(109, 63, 32, 0.3);
+        }
+
+        .legend {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .legend h4 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: #6d3f20;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .legend-marker {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 25px 20px;
+            }
+            .header h1 {
+                font-size: 28px;
+            }
+            .header p {
+                font-size: 14px;
+            }
+            .intro {
+                padding: 25px 20px;
+            }
+            .intro p {
+                font-size: 14px;
+            }
+            .controls {
+                padding: 15px 20px;
+            }
+            .controls-content {
+                gap: 15px;
+            }
+            .control-group {
+                width: 100%;
+            }
+            select, input {
+                width: 100%;
+            }
+            .legend {
+                bottom: 10px;
+                right: 10px;
+                padding: 10px;
+            }
+            #map {
+                height: calc(100vh - 550px);
+                min-height: 400px;
+            }
+            .ad-container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <h1>🍫 Switzerland Chocolate Map</h1>
+            <p>Discover Switzerland's finest chocolate producers</p>
+        </div>
+    </div>
+
+    <div class="intro">
+        <div class="intro-content">
+            <p><strong>Swiss chocolate is the best in the world.</strong> There's no debate about it. From the velvety smoothness of Lindt's creations to the artisanal craftsmanship of small family-owned chocolatiers tucked away in Alpine villages, Switzerland has perfected the art of chocolate making over centuries.</p>
+            <p>Here's something locals know but tourists often miss: <strong>many chocolatiers only sell their creations in specific regions of Switzerland.</strong> Good luck finding Villars in Zurich, or tracking down a Geneva-exclusive praline maker in Ticino! Each canton guards its chocolate treasures, making discovery part of the adventure.</p>
+            <p>They're all fantastic, but each offers something unique. Use this map to explore Switzerland's chocolate landscape, plan your sweet journey, and discover the hidden gems that make Swiss chocolate truly legendary.</p>
+        </div>
+    </div>
+
+    <div class="controls">
+        <div class="controls-content">
+            <div class="control-group">
+                <label>Region</label>
+                <select id="regionFilter">
+                    <option value="all">All Regions</option>
+                    <option value="zurich">Zurich</option>
+                    <option value="geneva">Geneva</option>
+                    <option value="bern">Bern</option>
+                    <option value="ticino">Ticino</option>
+                    <option value="vaud">Vaud</option>
+                    <option value="glarus">Glarus</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Producer Type</label>
+                <select id="typeFilter">
+                    <option value="all">All Types</option>
+                    <option value="artisan">Artisan</option>
+                    <option value="commercial">Commercial</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Chocolate Type</label>
+                <select id="chocolateFilter">
+                    <option value="all">All Chocolates</option>
+                    <option value="dark">Dark</option>
+                    <option value="milk">Milk</option>
+                    <option value="specialty">Specialty</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label>Search</label>
+                <input type="text" id="searchInput" placeholder="Search producers...">
+            </div>
+        </div>
+    </div>
+
+    <div id="map"></div>
+
+    <div class="ad-container">
+        <div class="ad-label">Advertisement</div>
+        <div class="ad-space">
+            <!-- Google AdSense code goes here -->
+            <!-- Replace this placeholder with your AdSense ad unit code -->
+            <div class="ad-placeholder">
+                AdSense ad unit will appear here
+            </div>
+            
+            <!-- Example AdSense code structure (replace with your actual code):
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
+                 crossorigin="anonymous"></script>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="XXXXXXXXXX"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+            -->
+        </div>
+    </div>
+
+    <div class="legend">
+        <h4>Producer Types</h4>
+        <div class="legend-item">
+            <div class="legend-marker" style="background: #8b4513;"></div>
+            <span>Artisan</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-marker" style="background: #4a2812;"></div>
+            <span>Commercial</span>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <script>
+        // Logo.dev API - Sign up at https://www.logo.dev/ to get your own token
+        // For demo purposes, we'll use Clearbit-style URLs (will need Logo.dev token for production)
+        var LOGO_API_TOKEN = 'YOUR_LOGO_DEV_TOKEN_HERE'; // Replace with your Logo.dev API token
+        var map = L.map('map', {
+            minZoom: 7,
+            maxZoom: 15
+        }).setView([46.8182, 8.2275], 8);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        }).addTo(map);
+
+        var switzerlandBounds = L.latLngBounds(
+            L.latLng(45.8, 5.9),
+            L.latLng(47.8, 10.5)
+        );
+        
+        map.setMaxBounds(switzerlandBounds);
+        map.on('drag', function() {
+            map.panInsideBounds(switzerlandBounds, { animate: false });
+        });
+
+        var producers = [
+            {
+                name: 'Lindt & Spruengli',
+                lat: 47.3769,
+                lng: 8.5417,
+                region: 'zurich',
+                type: 'commercial',
+                founded: 1845,
+                description: 'World-renowned for smooth melting chocolate.',
+                specialties: ['Lindor Truffles', 'Excellence Bars', 'Gold Bunny'],
+                chocolateTypes: ['dark', 'milk', 'specialty'],
+                priceRange: '$$-$$$',
+                knownFor: 'Pioneering conching process',
+                knownFor: 'Pioneering conching process',
+                website: 'https://www.lindt.com'
+            },
+            {
+                name: 'Laederach',
+                lat: 47.0502,
+                lng: 9.0631,
+                region: 'glarus',
+                type: 'artisan',
+                founded: 1962,
+                description: 'Family-owned chocolatier famous for fresh slabs.',
+                specialties: ['FrischSchoggi Slabs', 'Grand Cru', 'Pralines'],
+                chocolateTypes: ['dark', 'milk'],
+                priceRange: '$$$',
+                knownFor: 'Artisanal FrischSchoggi slabs',
+                website: 'https://www.laederach.com'
+            },
+            {
+                name: 'Durig Chocolatier',
+                lat: 46.5197,
+                lng: 6.6323,
+                region: 'vaud',
+                type: 'artisan',
+                founded: 1998,
+                description: 'Organic and fair-trade chocolates.',
+                specialties: ['Handmade Pralines', 'Single Origin', 'Organic Bars'],
+                chocolateTypes: ['dark', 'specialty'],
+                priceRange: '$$',
+                knownFor: 'Sustainable organic chocolate',
+                website: 'https://www.durig.ch'
+            },
+            {
+                name: 'Confiserie Spruengli',
+                lat: 47.3686,
+                lng: 8.5391,
+                region: 'zurich',
+                type: 'commercial',
+                founded: 1836,
+                description: 'Zurich institution with Luxemburgerli.',
+                specialties: ['Luxemburgerli', 'Truffes du Jour', 'Pralines'],
+                chocolateTypes: ['milk', 'specialty'],
+                priceRange: '$$$',
+                knownFor: 'Iconic Luxemburgerli macarons',
+                website: 'https://www.spruengli.ch'
+            },
+            {
+                name: 'Max Chocolatier',
+                lat: 47.0502,
+                lng: 8.3093,
+                region: 'bern',
+                type: 'artisan',
+                founded: 2008,
+                description: 'Award-winning bean-to-bar chocolatier.',
+                specialties: ['Bean-to-Bar', 'Flavor Innovations', 'Chocolate Bars'],
+                chocolateTypes: ['dark', 'specialty'],
+                priceRange: '$$-$$$',
+                knownFor: 'Creative flavors and transparency',
+                website: 'https://www.maxchocolatier.com'
+            },
+            {
+                name: 'Alprose',
+                lat: 46.0037,
+                lng: 8.9511,
+                region: 'ticino',
+                type: 'commercial',
+                founded: 1957,
+                description: 'Ticino producer with chocolate museum.',
+                specialties: ['Milk Chocolate', 'Pralines', 'Gift Assortments'],
+                chocolateTypes: ['milk', 'dark'],
+                priceRange: '$$',
+                knownFor: 'Chocolate museum and tours',
+                website: 'https://www.alprose.ch'
+            },
+            {
+                name: 'Favarger',
+                lat: 46.2044,
+                lng: 6.1500,
+                region: 'geneva',
+                type: 'commercial',
+                founded: 1826,
+                description: 'Geneva oldest chocolatier.',
+                specialties: ['Avelines', 'Acacias', 'Dark Chocolate'],
+                chocolateTypes: ['dark', 'milk'],
+                priceRange: '$$',
+                knownFor: 'Historic Geneva chocolatier',
+                website: 'https://www.favarger.com'
+            },
+            {
+                name: 'Stella Bernrain',
+                lat: 47.3800,
+                lng: 8.5450,
+                region: 'zurich',
+                type: 'artisan',
+                founded: 1929,
+                description: 'Boutique seasonal specialties.',
+                specialties: ['Seasonal Collections', 'Pralines', 'Truffles'],
+                chocolateTypes: ['milk', 'specialty'],
+                priceRange: '$$-$$$',
+                knownFor: 'Handcrafted seasonal chocolates',
+                website: 'https://www.stellabernrain.ch/en'
+            },
+            {
+                name: 'Villars',
+                lat: 46.4800,
+                lng: 7.0000,
+                region: 'vaud',
+                type: 'commercial',
+                founded: 1901,
+                description: 'Historic Alpine-inspired chocolate.',
+                specialties: ['Napolitains', 'Milk Chocolate', 'Swiss Alps Collection'],
+                chocolateTypes: ['milk', 'dark'],
+                priceRange: '$$',
+                knownFor: 'Traditional Swiss chocolate bars',
+                website: 'https://www.villars.com'
+            },
+            {
+                name: 'Chocolate Frey',
+                lat: 47.4700,
+                lng: 8.2100,
+                region: 'zurich',
+                type: 'commercial',
+                founded: 1887,
+                description: 'Switzerland most popular domestic brand.',
+                specialties: ['Chocolate Bars', 'Pralines', 'Seasonal Items'],
+                chocolateTypes: ['milk', 'dark', 'specialty'],
+                priceRange: '$-$$',
+                knownFor: 'Accessible quality chocolate',
+                website: 'https://delica.com/en/product/chocolate/our-brands'
+            },
+            {
+                name: 'Beschle',
+                lat: 47.4200,
+                lng: 8.6500,
+                region: 'zurich',
+                type: 'artisan',
+                founded: 1898,
+                description: 'Traditional handmade chocolates.',
+                specialties: ['Truffles', 'Pralines', 'Marzipan'],
+                chocolateTypes: ['milk', 'dark'],
+                priceRange: '$$-$$$',
+                knownFor: 'Time-honored recipes',
+                website: 'https://www.beschle.ch'
+            },
+            {
+                name: 'Auer Chocolatier',
+                lat: 46.2000,
+                lng: 6.1500,
+                region: 'geneva',
+                type: 'artisan',
+                founded: 1931,
+                description: 'Geneva innovation and quality.',
+                specialties: ['Ganaches', 'Pralines', 'Seasonal Collections'],
+                chocolateTypes: ['dark', 'milk', 'specialty'],
+                priceRange: '$$$',
+                knownFor: 'Elegant creative chocolates',
+                website: 'https://www.auer.ch'
+            },
+            {
+                name: 'Teuscher',
+                lat: 47.3720,
+                lng: 8.5410,
+                region: 'zurich',
+                type: 'artisan',
+                founded: 1932,
+                description: 'Luxury champagne truffles.',
+                specialties: ['Champagne Truffles', 'Pralines', 'Marzipan'],
+                chocolateTypes: ['milk', 'specialty'],
+                priceRange: '$$$',
+                knownFor: 'World-famous champagne truffles',
+                website: 'https://www.teuscher.com'
+            },
+            {
+                name: 'Merkur',
+                lat: 46.9479,
+                lng: 7.4480,
+                region: 'bern',
+                type: 'artisan',
+                founded: 1890,
+                description: 'Historic Bern confiserie.',
+                specialties: ['Pralines', 'Chocolate Bars', 'Truffles'],
+                chocolateTypes: ['milk', 'dark'],
+                priceRange: '$$',
+                knownFor: 'Traditional Swiss craftsmanship',
+                website: 'https://www.merkur-bern.ch'
+            },
+            {
+                name: 'Felchlin',
+                lat: 47.1030,
+                lng: 8.3710,
+                region: 'bern',
+                type: 'commercial',
+                founded: 1908,
+                description: 'Premium couverture manufacturer.',
+                specialties: ['Couverture', 'Grand Cru', 'Single Origin'],
+                chocolateTypes: ['dark', 'milk', 'specialty'],
+                priceRange: '$$$',
+                knownFor: 'Professional-grade couverture',
+                website: 'https://www.felchlin.com'
+            },
+            {
+                name: 'Ragusa',
+                lat: 47.3620,
+                lng: 8.5280,
+                region: 'zurich',
+                type: 'commercial',
+                founded: 1942,
+                description: 'Iconic hazelnut praline bar.',
+                specialties: ['Ragusa Bars', 'Praline Chocolate'],
+                chocolateTypes: ['milk'],
+                priceRange: '$$',
+                knownFor: 'The legendary Ragusa bar',
+                website: 'https://www.ragusa.ch'
+            },
+            {
+                name: 'Cailler',
+                lat: 46.6200,
+                lng: 7.0500,
+                region: 'vaud',
+                type: 'commercial',
+                founded: 1819,
+                description: 'Switzerland oldest chocolate brand.',
+                specialties: ['Frigor', 'Branche', 'Milk Chocolate Bars'],
+                chocolateTypes: ['milk', 'dark'],
+                priceRange: '$$',
+                knownFor: 'Historic factory with tours',
+                website: 'https://www.cailler.ch'
+            },
+            {
+                name: 'Maestrani',
+                lat: 47.3900,
+                lng: 9.0300,
+                region: 'zurich',
+                type: 'commercial',
+                founded: 1852,
+                description: 'Traditional Swiss chocolate maker.',
+                specialties: ['Minor', 'Munz', 'Chocolate Bars'],
+                chocolateTypes: ['milk', 'dark'],
+                priceRange: '$-$$',
+                knownFor: 'Famous Minor mints',
+                website: 'https://www.maestrani.ch'
+            },
+            {
+                name: 'Chocolat Bernrain',
+                lat: 47.3880,
+                lng: 8.5180,
+                region: 'zurich',
+                type: 'commercial',
+                founded: 1946,
+                description: 'Sustainable chocolate producer.',
+                specialties: ['Organic Chocolate', 'Fair Trade', 'Premium Bars'],
+                chocolateTypes: ['dark', 'milk', 'specialty'],
+                priceRange: '$$',
+                knownFor: 'Sustainable production',
+                website: 'https://www.chocolat-bernrain.ch'
+            },
+            {
+                name: 'Schober Confiserie',
+                lat: 47.3695,
+                lng: 8.5445,
+                region: 'zurich',
+                type: 'artisan',
+                founded: 1842,
+                description: 'Historic Zurich cafe.',
+                specialties: ['Pralines', 'Truffles', 'Chocolate Desserts'],
+                chocolateTypes: ['milk', 'dark'],
+                priceRange: '$$-$$$',
+                knownFor: 'Elegant cafe atmosphere',
+                website: 'https://www.confiserie-schober.ch'
+            },
+            {
+                name: 'Aeschbach Chocolatier',
+                lat: 46.9520,
+                lng: 7.4380,
+                region: 'bern',
+                type: 'artisan',
+                founded: 1972,
+                description: 'Award-winning innovative creations.',
+                specialties: ['Pralines', 'Truffles', 'Chocolate Art'],
+                chocolateTypes: ['dark', 'milk', 'specialty'],
+                priceRange: '$$$',
+                knownFor: 'Artistic chocolate creations',
+                website: 'https://www.aeschbach-chocolatier.ch'
+            },
+            {
+                name: 'Honold',
+                lat: 47.3645,
+                lng: 8.5495,
+                region: 'zurich',
+                type: 'artisan',
+                founded: 1905,
+                description: 'Premium Zurich confiserie.',
+                specialties: ['Pralines', 'Truffles', 'Chocolate Cakes'],
+                chocolateTypes: ['milk', 'dark'],
+                priceRange: '$$$',
+                knownFor: 'Luxurious handmade chocolates',
+                website: 'https://www.honold.ch'
+            },
+            {
+                name: 'Vollenweider',
+                lat: 47.3725,
+                lng: 8.5365,
+                region: 'zurich',
+                type: 'artisan',
+                founded: 1961,
+                description: 'Family-run seasonal chocolatier.',
+                specialties: ['Pralines', 'Seasonal Specialties', 'Truffles'],
+                chocolateTypes: ['milk', 'dark', 'specialty'],
+                priceRange: '$$-$$$',
+                knownFor: 'Creative seasonal chocolates',
+                website: 'https://www.confiserie-vollenweider.ch'
+            }
+        ];
+
+        var markers = [];
+
+        function getLogoUrl(website) {
+            // Extract domain from website URL
+            var domain = website.replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0];
+            // Use Logo.dev API (requires free API token from https://www.logo.dev/)
+            return 'https://img.logo.dev/' + domain + '?token=' + LOGO_API_TOKEN + '&size=80';
+        }
+
+        function createPopupContent(producer) {
+            var html = '<div class="popup-header">';
+            html += '<div class="popup-header-text">';
+            html += '<h3>' + producer.name + '</h3>';
+            html += '</div>';
+            var logoUrl = getLogoUrl(producer.website);
+            html += '<div class="popup-logo"><img src="' + logoUrl + '" alt="' + producer.name + ' logo" onerror="this.parentElement.innerHTML=\'🍫\'" /></div>';
+            html += '</div>';
+            html += '<div class="popup-body">';
+            html += '<p>' + producer.description + '</p>';
+            html += '<div class="popup-specialties">';
+            for (var i = 0; i < producer.specialties.length; i++) {
+                html += '<span class="specialty-tag">' + producer.specialties[i] + '</span>';
+            }
+            html += '</div>';
+            html += '<p><strong>Founded:</strong> ' + producer.founded + '</p>';
+            html += '<p><strong>Known For:</strong> ' + producer.knownFor + '</p>';
+            html += '<p><strong>Price Range:</strong> ' + producer.priceRange + '</p>';
+            html += '</div>';
+            html += '<div class="popup-footer">';
+            html += '<a href="' + producer.website + '" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Visit Website</a>';
+            html += '</div>';
+            return html;
+        }
+
+        function addMarkers(filteredProducers) {
+            // Remove existing markers
+            for (var i = 0; i < markers.length; i++) {
+                map.removeLayer(markers[i]);
+            }
+            markers = [];
+
+            for (var i = 0; i < filteredProducers.length; i++) {
+                var producer = filteredProducers[i];
+                var iconHtml = '<div class="marker-tooltip">' + producer.name + '</div>';
+                var marker = L.marker([producer.lat, producer.lng], {
+                    icon: L.divIcon({
+                        className: 'custom-marker ' + producer.type,
+                        iconSize: [20, 20],
+                        html: iconHtml
+                    })
+                }).addTo(map);
+
+                marker.bindPopup(createPopupContent(producer), {
+                    maxWidth: 320,
+                    className: 'custom-popup'
+                });
+
+                markers.push(marker);
+            }
+        }
+
+        function filterProducers() {
+            var region = document.getElementById('regionFilter').value;
+            var type = document.getElementById('typeFilter').value;
+            var chocolate = document.getElementById('chocolateFilter').value;
+            var search = document.getElementById('searchInput').value.toLowerCase();
+
+            var filtered = [];
+            for (var i = 0; i < producers.length; i++) {
+                var p = producers[i];
+                var matchRegion = region === 'all' || p.region === region;
+                var matchType = type === 'all' || p.type === type;
+                var matchChocolate = chocolate === 'all' || p.chocolateTypes.indexOf(chocolate) !== -1;
+                var matchSearch = search === '' || 
+                    p.name.toLowerCase().indexOf(search) !== -1 || 
+                    p.description.toLowerCase().indexOf(search) !== -1;
+                
+                if (matchRegion && matchType && matchChocolate && matchSearch) {
+                    filtered.push(p);
+                }
+            }
+
+            addMarkers(filtered);
+        }
+
+        document.getElementById('regionFilter').addEventListener('change', filterProducers);
+        document.getElementById('typeFilter').addEventListener('change', filterProducers);
+        document.getElementById('chocolateFilter').addEventListener('change', filterProducers);
+        document.getElementById('searchInput').addEventListener('input', filterProducers);
+
+        addMarkers(producers);
+    </script>
+</body>
+</html>
