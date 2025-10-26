@@ -4,12 +4,288 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blog - Switzerland Chocolate Map</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Add similar styling to match your main page */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f4f4f5;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+            color: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1001;
+        }
+
+        .nav-menu {
+            background: rgba(0,0,0,0.15);
+            padding: 15px 40px;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .nav-menu ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 35px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav-menu li {
+            display: inline-block;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+            padding: 8px 0;
+            border-bottom: 3px solid transparent;
+            display: inline-block;
+        }
+
+        .nav-menu a:hover {
+            border-bottom: 3px solid rgba(255,255,255,0.7);
+        }
+
+        .nav-menu a.active {
+            border-bottom: 3px solid white;
+            font-weight: 700;
+        }
+
+        .header-content-wrapper {
+            padding: 30px 40px;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header h1 {
+            font-size: 40px;
+            margin-bottom: 8px;
+            font-weight: 700;
+            letter-spacing: -0.8px;
+        }
+
+        .header p {
+            font-size: 17px;
+            opacity: 0.95;
+            line-height: 1.5;
+            max-width: 900px;
+            font-weight: 400;
+        }
+
+        .content {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 40px;
+            min-height: 60vh;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .empty-state h2 {
+            font-size: 32px;
+            color: #1f2937;
+            margin-bottom: 15px;
+        }
+
+        .empty-state p {
+            font-size: 18px;
+            color: #6b7280;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .article-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .article-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+
+        .article-thumbnail {
+            width: 100%;
+            height: 240px;
+            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            overflow: hidden;
+        }
+
+        .article-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .article-content {
+            padding: 20px;
+        }
+
+        .article-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .article-date {
+            font-size: 13px;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 50px;
+            padding-bottom: 40px;
+        }
+
+        .page-btn {
+            padding: 10px 18px;
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            color: #4a5568;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .page-btn:hover {
+            background: #4a5568;
+            color: white;
+            border-color: #4a5568;
+        }
+
+        .page-btn.active {
+            background: #4a5568;
+            color: white;
+            border-color: #4a5568;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                padding: 10px 20px;
+            }
+            .nav-menu ul {
+                gap: 20px;
+            }
+            .nav-menu a {
+                font-size: 13px;
+            }
+            .header-content-wrapper {
+                padding: 25px 20px;
+            }
+            .header h1 {
+                font-size: 28px;
+            }
+            .header p {
+                font-size: 14px;
+            }
+            .content {
+                padding: 0 20px;
+            }
+            .articles-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .article-thumbnail {
+                height: 200px;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Navigation menu (same as home page) -->
-    <!-- Blog content here -->
+    <div class="header">
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="#" class="active">Blog</a></li>
+            </ul>
+        </nav>
+        <div class="header-content-wrapper">
+            <div class="header-content">
+                <h1>Blog</h1>
+                <p>Stories and insights about Swiss chocolate culture</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <!-- When you have no articles, show this -->
+        <div class="empty-state">
+            <h2>Coming Soon</h2>
+            <p>We're working on exciting chocolate stories and guides. Check back soon!</p>
+        </div>
+
+        <!-- Uncomment this section when you have articles to add -->
+        <!--
+        <div class="articles-grid">
+            
+            <a href="ARTICLE_URL_HERE" class="article-card">
+                <div class="article-thumbnail">
+                    <img src="IMAGE_URL_HERE.jpg" alt="Article title">
+                </div>
+                <div class="article-content">
+                    <h2 class="article-title">Your Article Title Here</h2>
+                    <p class="article-date">January 15, 2025</p>
+                </div>
+            </a>
+
+            Add more article cards here as you write them
+            
+        </div>
+
+        <div class="pagination">
+            <a href="#" class="page-btn active">1</a>
+            <a href="#" class="page-btn">2</a>
+            <a href="#" class="page-btn">Next →</a>
+        </div>
+        -->
+    </div>
 </body>
 </html>
