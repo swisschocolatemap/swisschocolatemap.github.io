@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article Title Here - Switzerland Chocolate Map</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f4f4f5;
+            line-height: 1.7;
+            color: #1f2937;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+            color: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1001;
+        }
+
+        .nav-menu {
+            background: rgba(0,0,0,0.15);
+            padding: 15px 40px;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .nav-menu ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 35px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav-menu li {
+            display: inline-block;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+            padding: 8px 0;
+            border-bottom: 3px solid transparent;
+            display: inline-block;
+        }
+
+        .nav-menu a:hover {
+            border-bottom: 3px solid rgba(255,255,255,0.7);
+        }
+
+        .nav-menu a.active {
+            border-bottom: 3px solid white;
+            font-weight: 700;
+        }
+
+        .article-hero {
+            width: 100%;
+            height: 500px;
+            background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .article-hero img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .article-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 60px 40px;
+            background: white;
+        }
+
+        .article-header {
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .article-title {
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 15px;
+            color: #111827;
+        }
+
+        .article-subtitle {
+            font-size: 20px;
+            color: #6b7280;
+            margin-bottom: 20px;
+            font-weight: 400;
+        }
+
+        .article-meta {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            font-size: 14px;
+            color: #9ca3af;
+            margin-top: 20px;
+        }
+
+        .article-content {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #374151;
+        }
+
+        .article-content h2 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-top: 50px;
+            margin-bottom: 20px;
+            color: #111827;
+        }
+
+        .article-content h3 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-top: 40px;
+            margin-bottom: 15px;
+            color: #1f2937;
+        }
+
+        .article-content p {
+            margin-bottom: 25px;
+        }
+
+        .article-content ul, .article-content ol {
+            margin-left: 30px;
+            margin-bottom: 25px;
+        }
+
+        .article-content li {
+            margin-bottom: 10px;
+        }
+
+        .article-content strong {
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .article-content a {
+            color: #4a5568;
+            text-decoration: underline;
+        }
+
+        .article-content a:hover {
+            color: #2d3748;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 50px;
+            padding: 12px 24px;
+            background: #4a5568;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            background: #2d3748;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                padding: 10px 20px;
+            }
+            
+            .nav-menu ul {
+                gap: 20px;
+            }
+
+            .article-hero {
+                height: 300px;
+            }
+
+            .article-container {
+                padding: 40px 20px;
+            }
+
+            .article-title {
+                font-size: 32px;
+            }
+
+            .article-subtitle {
+                font-size: 18px;
+            }
+
+            .article-content {
+                font-size: 16px;
+            }
+
+            .article-content h2 {
+                font-size: 26px;
+            }
+
+            .article-content h3 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="blog.html" class="active">Blog</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Hero Image -->
+    <div class="article-hero">
+        <!-- Replace with actual image: <img src="your-image.jpg" alt="Article title"> -->
+        <div style="font-size: 80px;">🍫</div>
+    </div>
+
+    <!-- Article Content -->
+    <div class="article-container">
+        <div class="article-header">
+            <h1 class="article-title">Your Article Title Goes Here</h1>
+            <p class="article-subtitle">A compelling subtitle or description of your article</p>
+            <div class="article-meta">
+                <span>📅 January 26, 2025</span>
+                <span>⏱️ 5 min read</span>
+            </div>
+        </div>
+
+        <div class="article-content">
+            <!-- START EDITING YOUR CONTENT HERE -->
+            
+            <p>This is where your article introduction goes. Write a compelling opening paragraph that hooks the reader and introduces the topic. You can write about Swiss chocolate, chocolatiers, travel experiences, or any chocolate-related content.</p>
+
+            <h2>Main Section Heading</h2>
+            
+            <p>This is your first main section. Add detailed content here. You can include multiple paragraphs, and they'll automatically be spaced properly.</p>
+
+            <p>Here's another paragraph with more details. Feel free to write as much as you need. The styling will handle everything automatically.</p>
+
+            <h3>Subsection Heading</h3>
+
+            <p>Use H3 headings for subsections within your main sections. This helps organize longer articles.</p>
+
+            <ul>
+                <li><strong>Bullet point one:</strong> Add important points here</li>
+                <li><strong>Bullet point two:</strong> Another key detail</li>
+                <li><strong>Bullet point three:</strong> More information</li>
+            </ul>
+
+            <h2>Another Main Section</h2>
+
+            <p>Continue your article with more sections. You can add as many H2 and H3 headings as you need to structure your content effectively.</p>
+
+            <p>Remember to keep paragraphs reasonably sized for readability. Break up long chunks of text into smaller, digestible pieces.</p>
+
+            <h3>Tips or Additional Information</h3>
+
+            <ol>
+                <li>Numbered lists work great for step-by-step instructions</li>
+                <li>Or for ranking items</li>
+                <li>Just use the &lt;ol&gt; tag instead of &lt;ul&gt;</li>
+            </ol>
+
+            <h2>Conclusion</h2>
+
+            <p>Wrap up your article with a conclusion that summarizes the key points or provides a call to action for your readers.</p>
+
+            <!-- END EDITING YOUR CONTENT HERE -->
+
+            <a href="blog.html" class="back-link">← Back to Blog</a>
+        </div>
+    </div>
+</body>
+</html>
